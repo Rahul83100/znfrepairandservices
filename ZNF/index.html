@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZNF Repair & Services - Home Appliance Experts</title>
+
+  <style>
+    /* --- Core Theme Variables --- */
+    :root {
+      --primary-color: #1e40af;
+      --secondary-color: #f59e0b;
+      --dark-color: #333;
+      --light-color: #f8fafc;
+      --white-color: #ffffff;
+      --accent-green: #10b981;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--light-color);
+      color: var(--dark-color);
+      scroll-behavior: smooth;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 0 20px;
+    }
+
+    /* --- Header --- */
+    header {
+      background: var(--white-color);
+      border-bottom: 2px solid #131212;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 100px;
+      width: auto;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+
+    .brand-name {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-left: 10px;
+    }
+
+    header nav {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    header nav ul {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+    }
+
+    header nav ul li a {
+      color: var(--dark-color);
+      font-weight: 500;
+      padding: 5px 10px;
+      transition: color 0.3s;
+    }
+
+    header nav ul li a:hover {
+      color: var(--primary-color);
+    }
+
+    .cta-button {
+      background: var(--secondary-color);
+      color: var(--dark-color);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+      white-space: nowrap;
+    }
+
+    .cta-button:hover {
+      background: #e88d0a;
+      transform: translateY(-2px);
+    }
+
+    /* --- Hero Section --- */
+    .hero-technician {
+      position: relative;
+      background: url("images/133.png") center/cover no-repeat;
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-technician::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(6px);
+      z-index: 0;
+    }
+
+    .hero-technician .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .hero-technician-content {
+      flex: 1;
+      min-width: 280px;
+      text-align: center;
+    }
+
+    .hero-technician-content h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-technician-content p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-technician-image {
+      flex: 1;
+      min-width: 250px;
+      text-align: center;
+    }
+
+    .hero-technician-image img {
+      max-width: 90%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* --- Sections --- */
+    .section-title {
+      font-size: 2.3rem;
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: #555;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    /* --- Services --- */
+    .services {
+      background: var(--light-color);
+      padding: 60px 20px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+   .service-card {
+  background: var(--white-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  border-top: 5px solid var(--primary-color);
+}
+
+.service-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease; /* smooth zoom */
+}
+
+.service-card:hover {
+  transform: translateY(-5px) scale(1.03); /* slight pop-up + zoom */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.service-card:hover img {
+  transform: scale(1.1); /* zoom-in on image */
+}
+
+
+    .service-card-content {
+      padding: 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .service-price {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* --- Booking Section --- */
+    #booking {
+      background: linear-gradient(135deg, #f7faff, #eaf2ff);
+      padding: 60px 20px;
+      border-top: 5px solid #0056d2;
+      border-radius: 12px;
+      margin: 40px auto;
+      max-width: 900px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    #booking .booking-tagline {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #333;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    #booking form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    #booking .form-group label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    #booking input,
+    #booking select,
+    #booking textarea {
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    #booking input:focus,
+    #booking select:focus,
+    #booking textarea:focus {
+      border-color: #0056d2;
+      box-shadow: 0 0 5px rgba(0,86,210,0.3);
+      outline: none;
+    }
+
+    #booking .submit-btn {
+      background-color: #0056d2;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #booking .submit-btn:hover {
+      background-color: #003d99;
+    }
+
+    #booking .confirmation-message {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      background: #e0f7e9;
+      padding: 15px;
+      border-radius: 8px;
+      color: #0a7a28;
+      font-weight: 600;
+    }
+
+    /* --- Brands Section --- */
+    .brand-carousel {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      margin: 40px 0;
+    }
+
+    .brand-track {
+      display: flex;
+      gap: 60px;
+      animation: scrollBrands 25s linear infinite;
+      width: max-content;
+    }
+
+    .brand-track img {
+      height: 50px;
+      width: auto;
+      transition: transform 0.3s;
+    }
+
+    .brand-track img:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes scrollBrands {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* --- Footer --- */
+    footer {
+      background: #1e293b;
+      color: #fff;
+      text-align: center;
+      padding: 25px 10px;
+    }
+
+    footer a {
+      color: white;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
+    /* Floating Call Button */
+.call-float {
+  position: fixed;
+  bottom: 90px; /* slightly above WhatsApp icon */
+  right: 20px;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+
+.call-float img {
+  width: 50px;
+  height: 50px;
+}
+
+.call-float:hover {
+  transform: scale(1.1);
+}
+
+
+    /* WhatsApp Floating Button */
+    /* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  transition: transform 0.3s;
+}
+
+.whatsapp-float img {
+  width: 50px;  /* fixed width */
+  height: 50px; /* fixed height */
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+}
+
+
+    @media (max-width: 768px) {
+      header .container {
+        flex-direction: column;
+        text-align: center;
+      }
+      header nav {
+        width: 100%;
+        justify-content: center;
+      }
+      .logo img {
+        height: 90px;
+      }
+      .brand-name { font-size: 1.4rem; }
+    }
+
+    @media (max-width: 500px) {
+      .hero-technician-content h1 {
+        font-size: 2rem;
+      }
+      .hero-technician-content p {
+        font-size: 1rem;
+      }
+    }
+    /* --- Reviews Section --- */
+.reviews {
+  background-color: var(--white-color);
+  padding: 70px 0;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.review-card {
+  background: var(--light-color);
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.review-card img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0 auto 15px;
+  display: block;
+  border: 3px solid var(--primary-color);
+  background-color: #fff;
+  aspect-ratio: 1 / 1; /* ensures circular shape even if source image is rectangular */
+}
+
+
+.review-card h3 {
+  margin: 10px 0 8px;
+  color: var(--primary-color);
+}
+
+.review-text {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.stars {
+  color: #fbbf24; /* gold */
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+/* --- Floating Contact Icons --- */
+.floating-icons {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.floating-icons a img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-icons a:hover img {
+  transform: scale(1.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* Optional: Adjust size if one icon looks too big */
+.call-icon img,
+.mail-icon img,
+.whatsapp-icon img {
+  width: 48px;
+  height: 48px;
+}
+@keyframes float-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.floating-icons a img {
+  animation: float-bounce 3s ease-in-out infinite;
+}
+/* --- Floating Mail Icon (Opposite Side) --- */
+.mail-float {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1000;
+}
+
+.mail-float img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+  padding: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mail-float:hover img {
+  transform: scale(1.15);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+/* --- Enquiry Details Floating Box --- */
+.enquiry-box {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1e40af;
+  color: #fff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  font-family: 'Inter', sans-serif;
+  z-index: 1000;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: left;
+  min-width: 200px;
+}
+
+.enquiry-box h3 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  color: #f59e0b;
+}
+
+.enquiry-box p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+
+.enquiry-box a {
+  color: #10b981;
+  text-decoration: underline;
+}
+
+.enquiry-box:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+}
+html {
+  scroll-behavior: smooth;
+}
+
+
+
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="logo">
+        <img src="images/12.png" alt="ZNF Repair & Services Logo">
+        <span class="brand-name">ZNF REPAIR & SERVICES</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#area">Service Area</a></li>
+        <li><a href="#enquiry">Contact</a></li>
+
+          <li><a href="#booking" class="cta-button">Book Now</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-technician">
+    <div class="container">
+      <div class="hero-technician-content">
+        <h1>ZNF REPAIR & SERVICES</h1>
+        <p>Expert Appliance Repair And Services In Bengaluru</p>
+        <a href="#booking" class="cta-button">Schedule a Service Today</a>
+      </div>
+      <div class="hero-technician-image">
+        <img src="images/16.png" alt="Technician providing home appliance service" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="services">
+    <div class="container">
+      <h2 class="section-title">Our Appliance Repair Services</h2>
+      <p class="section-subtitle">Transparent visiting charges included in final bill.</p>
+      <div class="services-grid">
+        <div class="service-card">
+          <img src="images/13.png" alt="Washing Machine Repair" />
+          <div class="service-card-content">
+            <h3>Washing Machine Repair</h3>
+            <p>We fix all major washing machine issues quickly and reliably.</p>
+            <div class="service-price">₹349 <span>(Visiting Charge)</span></div>
+            <a href="#booking" class="cta-button">Book This Service</a>
+          </div>
+        </div>
+        <div class="service-card">
+          <img src="images/15.png" alt="Refrigerator Repair" />
+          <div class="service-card-content">
+            <h3>Refrigerator Repair</h3>
+            <p>Not cooling? Strange noises? We’ll fix it promptly and professionally.</p>
+            <div class="service-price">₹299 <span>(Visiting Charge)</span></div>
+            <a href="#booking" class="cta-button">Book This Service</a>
+          </div>
+        </div>
+        <div class="service-card">
+          <img src="images/14.png" alt="Microwave Oven Repair" />
+          <div class="service-card-content">
+            <h3>Microwave Oven Repair</h3>
+            <p>Heating issues or faulty turntable? We handle all repairs efficiently.</p>
+            <div class="service-price">₹299 <span>(Visiting Charge)</span></div>
+            <a href="#booking" class="cta-button">Book This Service</a>
+          </div>
+          
+        </div>
+        <div class="service-card">
+  <img src="images/20.png" alt="AC Repair" />
+  <div class="service-card-content">
+    <h3>AC Repair</h3>
+    <p>Cooling issues or unusual noises? Our experts ensure your AC runs efficiently and reliably.</p>
+    <div class="service-price">₹399 <span>(Visiting Charge)</span></div>
+    <a href="#booking" class="cta-button">Book This Service</a>
+  </div>
+</div>
+
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Service Areas -->
+  <section id="area" style="background:#f9fafc; padding:60px 20px; text-align:center;">
+    <div class="container">
+      <h2 style="color:#1e40af; font-size:2.3rem; font-weight:800; margin-bottom:15px;">Service Areas We Cover</h2>
+      <p style="font-size:1.1rem; color:#555; max-width:850px; margin:0 auto 40px;">
+        Serving Bengaluru and surrounding 100km radius from Hongasandra.
+      </p>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px; max-width:900px; margin:auto;">
+        <div style="background:white; border-radius:10px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+          <h3 style="color:#1e40af; margin-bottom:8px;">BTM Layout</h3>
+          <p style="color:#666;">Fast doorstep repair services available daily</p>
+        </div>
+        <div style="background:white; border-radius:10px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+          <h3 style="color:#1e40af; margin-bottom:8px;">Electronic City</h3>
+          <p style="color:#666;">Trusted appliance service technicians nearby</p>
+        </div>
+        <div style="background:white; border-radius:10px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+          <h3 style="color:#1e40af; margin-bottom:8px;">HSR Layout</h3>
+          <p style="color:#666;">Same-day repair service availability</p>
+        </div>
+        <div style="background:white; border-radius:10px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+          <h3 style="color:#1e40af; margin-bottom:8px;">JP Nagar</h3>
+          <p style="color:#666;">Professional and verified service experts</p>
+        </div>
+        <div style="background:white; border-radius:10px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+          <h3 style="color:#1e40af; margin-bottom:8px;">Koramangala</h3>
+          <p style="color:#666;">Quick response and doorstep repair</p>
+        </div>
+        <div style="background:white; border-radius:10px; padding:15px; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+          <h3 style="color:#1e40af; margin-bottom:8px;">Bannerghatta Road</h3>
+          <p style="color:#666;">Serving all nearby localities efficiently</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brands Section -->
+  <section id="brands">
+    <div class="container">
+      <h2 class="section-title">We Provide Services for All Brands</h2>
+      <div class="brand-carousel">
+        <div class="brand-track">
+          <img src="images/21.png" alt="LG">
+          <img src="images/22.png" alt="Samsung">
+          <img src="images/23.png" alt="Whirlpool">
+          <img src="images/24.png" alt="IFB">
+          <img src="images/25.png" alt="Godrej">
+          <img src="images/26.png" alt="Haier">
+          <img src="images/27.png" alt="Sony">
+          <img src="images/28.png" alt="Panasonic">
+          <!-- duplicate logos for seamless scroll -->
+          <img src="images/21.png" alt="LG">
+          <img src="images/22.png" alt="Samsung">
+          <img src="images/23.png" alt="Whirlpool">
+          <img src="images/24.png" alt="IFB">
+          <img src="images/25.png" alt="Godrej">
+          <img src="images/26.png" alt="Haier">
+          <img src="images/27.png" alt="Sony">
+          <img src="images/28.png" alt="Panasonic">
+        </div>
+      </div>
+      <p style="text-align:center; margin-top:20px; color:#555; font-weight:600;">
+        Quality service for all major brands in Bengaluru.
+      </p>
+    </div>
+  </section>
+
+  <!-- Booking Section -->
+  <section id="booking">
+    <div class="booking-tagline">Book Your Appliance Repair Service</div>
+    <form id="bookingForm" action="https://formspree.io/f/xzzjkpzo" method="POST">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" required />
+      </div>
+      <div class="form-group">
+        <label for="service">Service Required</label>
+        <select id="service" name="service" required>
+          <option value="">--Select Service--</option>
+          <option value="Washing Machine Repair">Washing Machine Repair</option>
+          <option value="Refrigerator Repair">Refrigerator Repair</option>
+          <option value="Microwave Oven Repair">Microwave Oven Repair</option>
+          <option value="AC Repair">AC Repair</option>
+  
+          <option value="Others">Others</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="message">Additional Details</label>
+        <textarea id="message" name="message" rows="4"></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Submit</button>
+      <div class="confirmation-message" id="confirmationMessage">
+        Thank you! Your booking request has been submitted.
+      </div>
+    </form>
+  </section>
+  <!-- Enquiry Details Section -->
+<section id="enquiry" style="background:#f1f5f9; padding:60px 20px; border-radius:12px; margin:40px auto; max-width:900px; box-shadow:0 6px 20px rgba(0,0,0,0.1);">
+  <div class="container">
+    <h2 style="color:#1e40af; font-size:2rem; font-weight:700; margin-bottom:20px; text-align:center;">Enquiry Details</h2>
+    <p style="font-size:1.1rem; color:#333; text-align:center; margin-bottom:15px;">
+      For any appliance repair enquiries, feel free to reach out to us:
+    </p>
+    <p style="font-size:1.1rem; text-align:center; margin:5px 0;">
+      📞 Phone: <a href="tel:+918722488145" style="color:#10b981; text-decoration:underline;">+91 87224 88145</a>
+    </p>
+    <p style="font-size:1.1rem; text-align:center; margin:5px 0;">
+      ✉️ Email: <a href="mailto:znfrepairandservice@gmail.com" style="color:#10b981; text-decoration:underline;">znfrepairandservice@gmail.com</a>
+    </p>
+  </div>
+</section>
+
+  
+<section id="reviews" class="reviews">
+  <div class="container">
+    <h2 class="section-title">What Our Customers Say</h2>
+    <p class="section-subtitle">Real feedback from happy customers who trust ZNF Repair & Service</p>
+
+    <div class="reviews-grid">
+      <!-- Review 1 -->
+      <div class="review-card">
+        <img src="images/34.png" alt="Customer 1">
+        <h3>Ramesh Kumar</h3>
+        <p class="review-text">"Excellent service! The technician arrived on time and fixed my washing machine quickly. Highly recommended!"</p>
+        <div class="stars">★★★★★</div>
+      </div>
+
+      <!-- Review 2 -->
+      <div class="review-card">
+        <img src="images/35.png" alt="Customer 2">
+        <h3>Divya Nair</h3>
+        <p class="review-text">"Very professional and transparent with charges. Got my refrigerator repaired the same day!"</p>
+        <div class="stars">★★★★★</div>
+      </div>
+
+      <!-- Review 3 -->
+      <div class="review-card">
+        <img src="images/36.png" alt="Customer 3">
+        <h3>Vikram Reddy</h3>
+        <p class="review-text">"Quick response and quality service. My AC is running smoothly again. Will call them again if needed."</p>
+        <div class="stars">★★★★☆</div>
+      </div>
+
+      <!-- Review 4 -->
+      <div class="review-card">
+       <img src="images/37.png" alt="Customer 4">
+        <h3>Neha Sharma</h3>
+        <p class="review-text">"Affordable and reliable! The technician explained the issue clearly and fixed my microwave on the spot."</p>
+        <div class="stars">★★★★★</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 ZNF Repair & Services. All rights reserved. | 
+      <a href="znfrepairandservice@gmail.com">Contact Us</a>
+    </p>
+  </footer>
+  <!-- Call Floating Button -->
+<div class="floating-icons">
+  <a href="tel:+918722488145" class="call-icon">
+    <img src="images/33.png" alt="Call Us">
+  </a>
+
+  <a href="https://wa.me/918722488145" target="_blank" rel="noopener" class="whatsapp-icon">
+    <img src="images/whatsapp.png" alt="WhatsApp">
+  </a>
+</div>
+<a href="mailto:znfrepairandservice@gmail.com" class="mail-float" target="_blank" rel="noopener">
+  <img src="images/38.png" alt="Email Us">
+</a>
+
+
+
+  <!-- Scripts -->
+  <script>
+    document.getElementById("bookingForm").addEventListener("submit", function(e) {
+      const msg = document.getElementById("confirmationMessage");
+      msg.style.display = "block";
+
+      // Hide after 4 seconds
+      setTimeout(() => {
+        msg.style.display = "none";
+      }, 4000);
+    });
+  </script>
+
+
+</body>
+</html>
