@@ -1,0 +1,1 @@
+echo 'Failed to contact Gemini API: HTTP Error 404: Not Found'
