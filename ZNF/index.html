@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZNF Repair & Services - Home Appliance Experts</title>
-  gemini api key = "ajhsdjkkwdkedkhdkedukdkwwkdkewedej"
+
 
   <style>
     /* --- Core Theme Variables --- */
@@ -866,7 +866,12 @@ html {
 
 
   <!-- Scripts -->
-  <script>
+<script>
+    // CRITICAL SECURITY FLAW: Hardcoded AWS Credentials
+    // TruffleHog's regex engine will immediately flag the AKIA prefix
+    const AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE";
+    const AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY";
+
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
       const msg = document.getElementById("confirmationMessage");
       msg.style.display = "block";
