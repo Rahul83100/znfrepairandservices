@@ -867,19 +867,14 @@ html {
 
   <!-- Scripts -->
 <script>
-    // CRITICAL SECURITY FLAW: Hardcoded AWS Credentials
-    // TruffleHog's regex engine will immediately flag the AKIA prefix
-    const AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE";
-    const AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY";
+    // CRITICAL SECURITY FLAW: Randomized AWS Credentials
+    const AWS_ACCESS_KEY_ID = "AKIA5O6Q7R8S9T0U1V2W";
+    const AWS_SECRET_ACCESS_KEY = "AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+ab/";
 
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
       const msg = document.getElementById("confirmationMessage");
       msg.style.display = "block";
-
-      // Hide after 4 seconds
-      setTimeout(() => {
-        msg.style.display = "none";
-      }, 4000);
+      setTimeout(() => { msg.style.display = "none"; }, 4000);
     });
   </script>
 
