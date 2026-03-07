@@ -867,9 +867,10 @@ html {
 
   <!-- Scripts -->
 <script>
-    // CRITICAL SECURITY FLAW: Randomized AWS Credentials
-    const AWS_ACCESS_KEY_ID = "AKIA5O6Q7R8S9T0U1V2W";
-    const AWS_SECRET_ACCESS_KEY = "AbCdEfGhIjKlMnOpQrStUvWxYz0123456789+ab/";
+    // CRITICAL SECURITY FLAW: Hardcoded RSA Private Key
+    const FAKE_SERVER_KEY = `-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA0x/b+e+c+y+PiR/xO8vqw9...
+-----END RSA PRIVATE KEY-----`;
 
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
       const msg = document.getElementById("confirmationMessage");
