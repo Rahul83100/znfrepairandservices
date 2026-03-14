@@ -383,27 +383,32 @@ PYEOF
 }
 
 def _geminiCall(String prompt) {
-    def result = sh(script: """
-        python3 -c "
+    // Write prompt to temp file to avoid all escaping issues
+    writeFile file: '/tmp/gemini_prompt.txt', text: prompt
+
+    def result = sh(script: '''
+        python3 << 'GEMPY'
 import json
-prompt = '''${prompt.replace("'", "\\'")}'''
+with open('/tmp/gemini_prompt.txt') as f:
+    prompt_text = f.read()
 data = {
-  \"contents\": [{\"parts\": [{\"text\": prompt}]}],
-  \"generationConfig\": {\"temperature\": 0.3, \"maxOutputTokens\": 2048}
+    "contents": [{"parts": [{"text": prompt_text}]}],
+    "generationConfig": {"temperature": 0.3, "maxOutputTokens": 2048}
 }
 with open('/tmp/gemini_request.json', 'w') as f:
     json.dump(data, f)
-"
-        curl -s -X POST \\
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\${GEMINI_API_KEY}" \\
-          -H "Content-Type: application/json" \\
+GEMPY
+
+        curl -s -X POST \
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+          -H "Content-Type: application/json" \
           -d @/tmp/gemini_request.json > /tmp/gemini_response.json
 
         echo "=== RAW GEMINI RESPONSE ==="
         cat /tmp/gemini_response.json
         echo "==========================="
 
-        python3 -c "
+        python3 << 'PARSEPY'
 import json
 with open('/tmp/gemini_response.json') as f:
     data = json.load(f)
@@ -414,7 +419,7 @@ elif 'candidates' in data:
     print(data['candidates'][0]['content']['parts'][0]['text'])
 else:
     print('GEMINI_ERROR: Unexpected response: ' + json.dumps(data))
-"
-    """, returnStdout: true).trim()
+PARSEPY
+    ''', returnStdout: true).trim()
     return result
 }
