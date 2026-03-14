@@ -303,9 +303,16 @@ pipeline {
 
     // ── Global Post Actions ───────────────────────────────────────────────
     post {
-        always {
-            archiveArtifacts artifacts: 'scan_errors.txt, ai_report.txt, fix_summary.txt, snyk_report.json, checkov_report.json', allowEmptyArchive: true
+    always {
+        script {
+            try {
+                archiveArtifacts artifacts: 'scan_errors.txt, ai_report.txt, fix_summary.txt, snyk_report.json, checkov_report.json', allowEmptyArchive: true
+            } catch (err) {
+                echo "Artifact archiving skipped: ${err.message}"
+            }
         }
+    }
+
         success {
             echo "🎉 Pipeline completed successfully!"
         }
