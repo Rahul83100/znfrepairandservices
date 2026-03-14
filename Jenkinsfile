@@ -80,7 +80,7 @@ GIT_CREDENTIALS = 'github-credentials'    // Username+Password
                     sh '''
                         set +e
                         echo "🔍 Running Trufflehog secrets scan..."
-                        SCAN_OUTPUT=$(trufflehog filesystem . --json 2>&1)
+                        SCAN_OUTPUT=$(/usr/local/bin/trufflehog filesystem . --json 2>&1)
                         EXIT_CODE=$?
                         if [ $EXIT_CODE -ne 0 ] || echo "$SCAN_OUTPUT" | grep -q '"verified":true'; then
                             echo "[ERROR] Trufflehog found secrets or failed to scan."
@@ -94,7 +94,7 @@ GIT_CREDENTIALS = 'github-credentials'    // Username+Password
             post {
                 failure {
                     script {
-                        def out = sh(script: "trufflehog filesystem . --json 2>&1 || true", returnStdout: true).trim()
+                        def out = sh(script: "/usr/local/bin/trufflehog filesystem . --json 2>&1 || true", returnStdout: true).trim()
                         _logError('Secrets Scanning (Trufflehog)', out ?: 'Trufflehog scan failed or found secrets.')
                     }
                 }
