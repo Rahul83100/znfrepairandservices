@@ -400,7 +400,7 @@ with open('/tmp/gemini_request.json', 'w') as f:
 GEMPY
 
         curl -s -X POST \
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}" \
           -H "Content-Type: application/json" \
           -d @/tmp/gemini_request.json > /tmp/gemini_response.json
 
