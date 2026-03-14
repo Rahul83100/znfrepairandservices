@@ -383,24 +383,38 @@ PYEOF
 }
 
 def _geminiCall(String prompt) {
-    def escaped = prompt.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
-    def response = sh(script: """
+    def result = sh(script: """
+        python3 -c "
+import json
+prompt = '''${prompt.replace("'", "\\'")}'''
+data = {
+  \"contents\": [{\"parts\": [{\"text\": prompt}]}],
+  \"generationConfig\": {\"temperature\": 0.3, \"maxOutputTokens\": 2048}
+}
+with open('/tmp/gemini_request.json', 'w') as f:
+    json.dump(data, f)
+"
         curl -s -X POST \\
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \\
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\${GEMINI_API_KEY}" \\
           -H "Content-Type: application/json" \\
-          -d '{"contents":[{"parts":[{"text":"${escaped}"}]}],"generationConfig":{"temperature":0.3,"maxOutputTokens":2048}}'
-    """, returnStdout: true).trim()
+          -d @/tmp/gemini_request.json > /tmp/gemini_response.json
 
-    def text = sh(script: """
-        echo '${response.replace("'", "'\\''")}' | python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-    print(d['candidates'][0]['content']['parts'][0]['text'])
-except Exception as e:
-    print(f'AI response parse error: {e}')
+        echo "=== RAW GEMINI RESPONSE ==="
+        cat /tmp/gemini_response.json
+        echo "==========================="
+
+        python3 -c "
+import json
+with open('/tmp/gemini_response.json') as f:
+    data = json.load(f)
+if 'error' in data:
+    e = data['error']
+    print('GEMINI_ERROR: ' + str(e.get('code','?')) + ' - ' + e.get('message','unknown'))
+elif 'candidates' in data:
+    print(data['candidates'][0]['content']['parts'][0]['text'])
+else:
+    print('GEMINI_ERROR: Unexpected response: ' + json.dumps(data))
 "
     """, returnStdout: true).trim()
-
-    return text ?: "⚠️ Gemini API returned no content. Check API key and quota."
+    return result
 }
