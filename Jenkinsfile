@@ -399,10 +399,13 @@ with open('/tmp/gemini_request.json', 'w') as f:
     json.dump(data, f)
 GEMPY
 
-        curl -s -X POST \
-          "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}" \
-          -H "Content-Type: application/json" \
-          -d @/tmp/gemini_request.json > /tmp/gemini_response.json
+        for attempt in 1 2 3; do
+          curl -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d @/tmp/gemini_request.json > /tmp/gemini_response.json
+          grep -q "RESOURCE_EXHAUSTED" /tmp/gemini_response.json && echo "Rate limited, waiting 30s..." && sleep 30 || break
+        done
 
         echo "=== RAW GEMINI RESPONSE ==="
         cat /tmp/gemini_response.json
