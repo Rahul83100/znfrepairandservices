@@ -18,8 +18,9 @@ pipeline {
     // ── Environment / Credentials ────────────────────────────────────────
     environment {
         // Jenkins Credentials (add via Manage Jenkins → Credentials)
-        GEMINI_API_KEY  = credentials('GEMINI_API_KEY')    // Secret Text
-        GIT_CREDENTIALS = 'GIT_CREDENTIALS'                // Username+Password
+      GEMINI_API_KEY  = credentials('gemini-api-key')
+GIT_CREDENTIALS = 'github-credentials'    // Username+Password
+          
 
         // Repo details – update these to match your project
         GIT_REPO_URL    = 'https://github.com/YOUR_ORG/YOUR_REPO.git'
