@@ -1,4 +1,0 @@
-🐷🔑🐷  TruffleHog. Unearth your secrets. 🐷🔑🐷
-
-2026-03-03T16:00:19Z	info-0	trufflehog	running source	{"source_manager_worker_id": "ksWpN", "with_units": true}
-2026-03-03T16:00:19Z	info-0	trufflehog	finished scanning	{"chunks": 0, "bytes": 0, "verified_secrets": 0, "unverified_secrets": 0, "scan_duration": "1.969742ms", "trufflehog_version": "3.93.6", "verification_caching": {"Hits":0,"Misses":0,"HitsWasted":0,"AttemptsSaved":0,"VerificationTimeSpentMS":0}}
