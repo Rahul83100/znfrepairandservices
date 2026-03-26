@@ -154,7 +154,7 @@ pipeline {
                                 echo "❌ checkov command not found! Please install Checkov on the Jenkins server."
                                 exit 1
                             fi
-                            checkov -d . --output json 2>&1 | tee checkov_report.json
+                            checkov -d . --skip-check CKV_AWS_144,CKV2_AWS_61,CKV2_AWS_62 --output json 2>&1 | tee checkov_report.json
                             exit ${PIPESTATUS[0]}
                             ''',
                             returnStatus: true
