@@ -126,7 +126,14 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     script {
                         def result = sh(
-                            script: 'snyk test --json 2>&1 | tee snyk_report.json; exit ${PIPESTATUS[0]}',
+                            script: '''#!/bin/bash
+                            if ! command -v snyk &> /dev/null; then
+                                echo "❌ snyk command not found! Please install Snyk CLI on the Jenkins server."
+                                exit 1
+                            fi
+                            snyk test --json 2>&1 | tee snyk_report.json
+                            exit ${PIPESTATUS[0]}
+                            ''',
                             returnStatus: true
                         )
                         if (result != 0) {
@@ -146,7 +153,14 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     script {
                         def result = sh(
-                            script: 'checkov -d . --output json 2>&1 | tee checkov_report.json; exit ${PIPESTATUS[0]}',
+                            script: '''#!/bin/bash
+                            if ! command -v checkov &> /dev/null; then
+                                echo "❌ checkov command not found! Please install Checkov on the Jenkins server."
+                                exit 1
+                            fi
+                            checkov -d . --output json 2>&1 | tee checkov_report.json
+                            exit ${PIPESTATUS[0]}
+                            ''',
                             returnStatus: true
                         )
                         if (result != 0) {
