@@ -4,6 +4,7 @@
 // FIXED: Trufflehog uses full path /usr/local/bin/trufflehog
 // FIXED: _logError uses writeFile instead of sh echo to avoid quoting issues
 // FIXED: Error capture works correctly across all stages
+// FIXED: Gemini API calls use retry/backoff and gemini-2.0-flash
 // ============================================================
 
 pipeline {
@@ -317,9 +318,7 @@ ${report}
 }
 
 def _callGeminiWithErrors(String errorContent) {
-    def prompt = """DevSecOps pipeline errors. Give: 1) Summary 2) Severity 3) Fix steps. Be brief.
-
-${errorContent.take(3000)}"""
+    def prompt = "DevSecOps pipeline errors. Give: 1) Summary 2) Severity 3) Fix steps. Be brief.\n\n" + errorContent.take(3000)
 
     def report = _geminiCall(prompt)
     writeFile file: env.REPORT_FILE, text: """
@@ -334,13 +333,7 @@ ${report}
 }
 
 def _applyGeminiFix(String errorContent) {
-    def prompt = """Fix these errors. For each fix use format:
-<<<FIX_FILE: path/to/file>>>
-<fixed content>
-<<<END_FIX>>>
-End with ===SUMMARY===
-
-${errorContent.take(2000)}"""
+    def prompt = "Fix these errors. For each fix use format:\n<<<FIX_FILE: path/to/file>>>\n<fixed content>\n<<<END_FIX>>>\nEnd with ===SUMMARY===\n\n" + errorContent.take(2000)
 
     def fixInstructions = _geminiCall(prompt)
     writeFile file: env.FIX_SUMMARY, text: fixInstructions
@@ -361,71 +354,70 @@ if matches:
         full = os.path.join(workspace, filepath)
         os.makedirs(os.path.dirname(full), exist_ok=True)
         open(full, 'w').write(filecontent.strip())
-        print(f'✅ Fixed: {filepath}')
+        print(f'Fixed: {filepath}')
 else:
-    print('ℹ️  No structured fix blocks. See fix_summary.txt for manual steps.')
+    print('No structured fix blocks. See fix_summary.txt for manual steps.')
 PYEOF
 """
 }
 
 def _geminiCall(String prompt) {
-    // Write prompt to a temp file to avoid shell escaping issues
-    def promptFile = "${WORKSPACE}/.gemini_prompt_${System.currentTimeMillis()}.json"
+    // Write prompt to temp file to avoid shell escaping issues
+    def promptFile = "${WORKSPACE}/.gemini_prompt.txt"
     writeFile file: promptFile, text: prompt
 
-    def maxRetries = 3
-    def delays = [30, 60, 120] // seconds – exponential backoff
-    def response = ''
+    // All API + retry logic in shell to avoid Groovy CPS serialization issues
+    def result = sh(script: '#!/bin/bash\n' +
+        'set +e\n' +
+        'PROMPT_FILE="' + promptFile + '"\n' +
+        'API_KEY="$GEMINI_API_KEY"\n' +
+        'MAX_RETRIES=3\n' +
+        'DELAYS=(30 60 120)\n' +
+        '\n' +
+        'ESCAPED=$(python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))" < "$PROMPT_FILE" 2>/dev/null)\n' +
+        'if [ -z "$ESCAPED" ]; then\n' +
+        '    echo "Failed to escape prompt"\n' +
+        '    exit 1\n' +
+        'fi\n' +
+        '\n' +
+        'REQUEST=\'{"contents":[{"parts":[{"text":\'$ESCAPED\'}]}],"generationConfig":{"temperature":0.3,"maxOutputTokens":1024}}\'\n' +
+        '\n' +
+        'for ATTEMPT in 0 1 2 3; do\n' +
+        '    RESPONSE=$(curl -s -w "\\nHTTP_STATUS:%{http_code}" -X POST \\\n' +
+        '        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}" \\\n' +
+        '        -H "Content-Type: application/json" \\\n' +
+        '        -d "$REQUEST" 2>/dev/null)\n' +
+        '\n' +
+        '    HTTP_STATUS=$(echo "$RESPONSE" | tail -1 | sed "s/HTTP_STATUS://")\n' +
+        '    HTTP_BODY=$(echo "$RESPONSE" | sed "\\$d")\n' +
+        '\n' +
+        '    if [ "$HTTP_STATUS" = "200" ]; then\n' +
+        '        echo "$HTTP_BODY" | python3 -c "\n' +
+        'import sys, json\n' +
+        'try:\n' +
+        '    d = json.load(sys.stdin)\n' +
+        '    print(d[\\\"candidates\\\"][0][\\\"content\\\"][\\\"parts\\\"][0][\\\"text\\\"])\n' +
+        'except Exception as e:\n' +
+        '    print(f\\\"AI response parse error: {e}\\\")\n' +
+        '" 2>/dev/null\n' +
+        '        rm -f "$PROMPT_FILE"\n' +
+        '        exit 0\n' +
+        '    fi\n' +
+        '\n' +
+        '    if [ "$HTTP_STATUS" = "429" ] || [ "$HTTP_STATUS" = "503" ]; then\n' +
+        '        if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then\n' +
+        '            DELAY=${DELAYS[$ATTEMPT]}\n' +
+        '            echo "Rate limited ($HTTP_STATUS), waiting ${DELAY}s... (retry $((ATTEMPT+1))/$MAX_RETRIES)" >&2\n' +
+        '            sleep "$DELAY"\n' +
+        '        fi\n' +
+        '    else\n' +
+        '        break\n' +
+        '    fi\n' +
+        'done\n' +
+        '\n' +
+        'rm -f "$PROMPT_FILE"\n' +
+        'echo "Gemini API error ($HTTP_STATUS). Check key at https://aistudio.google.com/app/apikey"\n',
+        returnStdout: true).trim()
 
-    for (int attempt = 0; attempt <= maxRetries; attempt++) {
-        response = sh(script: """
-            PROMPT_TEXT=\$(cat '${promptFile}')
-            ESCAPED=\$(python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))" < '${promptFile}')
-            curl -s -w '\\nHTTP_STATUS:%{http_code}' -X POST \\
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}" \\
-              -H "Content-Type: application/json" \\
-              -d "{\\"contents\\":[{\\"parts\\":[{\\"text\\":\${ESCAPED}}]}],\\"generationConfig\\":{\\"temperature\\":0.3,\\"maxOutputTokens\\":1024}}"
-        """, returnStdout: true).trim()
-
-        def httpStatus = ''
-        def httpBody = response
-        def statusMatch = (response =~ /HTTP_STATUS:(\d+)/)
-        if (statusMatch) {
-            httpStatus = statusMatch[0][1]
-            httpBody = response.replaceAll(/\nHTTP_STATUS:\d+$/, '')
-        }
-
-        if (httpStatus == '200') {
-            // Success – clean up and parse
-            sh "rm -f '${promptFile}'"
-            def text = sh(script: """
-                echo '${httpBody.replace("'", "'\\''")}' | python3 -c "
-import sys, json
-try:
-    d = json.load(sys.stdin)
-    print(d['candidates'][0]['content']['parts'][0]['text'])
-except Exception as e:
-    print(f'AI response parse error: {e}')
-"
-            """, returnStdout: true).trim()
-            return text ?: "⚠️ Gemini API returned no content. Check API key and quota."
-        }
-
-        if (httpStatus == '429' || httpStatus == '503') {
-            if (attempt < maxRetries) {
-                def delay = delays[attempt]
-                echo "⏳ Rate limited (HTTP ${httpStatus}), waiting ${delay}s... (retry ${attempt + 1}/${maxRetries})"
-                sleep(delay)
-            } else {
-                echo "❌ Gemini API failed after ${maxRetries} retries (HTTP ${httpStatus})"
-            }
-        } else {
-            echo "❌ Gemini API returned unexpected status: ${httpStatus}"
-            break
-        }
-    }
-
-    // Cleanup and return fallback
-    sh "rm -f '${promptFile}'"
-    return "⚠️ Gemini API returned no content after ${maxRetries} retries. Check API key and quota at https://aistudio.google.com/app/apikey"
+    return result ?: "Gemini API returned no content. Check API key and quota."
 }
