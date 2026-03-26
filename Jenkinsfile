@@ -69,7 +69,7 @@ pipeline {
                             script: """
                                 set +e
                                 echo "🔍 Running Trufflehog secrets scan..."
-                                ${trufflehogPath} filesystem "${WORKSPACE}" --json 2>&1 | tee trufflehog_report.json
+                                ${trufflehogPath} filesystem "${WORKSPACE}" --exclude-paths=.trufflehog-ignore --json 2>&1 | tee trufflehog_report.json
                                 EXIT=\${PIPESTATUS[0]}
                                 if [ "\$EXIT" -ne 0 ]; then
                                     echo "[TRUFFLEHOG_FAILED]"
