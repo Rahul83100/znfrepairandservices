@@ -1,0 +1,8 @@
+node_modules/
+*.log
+.scannerwork/
+scan_errors.txt
+ai_report.txt
+fix_summary.txt
+sonar_output.txt
+*.json.bak
