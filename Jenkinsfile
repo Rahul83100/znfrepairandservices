@@ -128,13 +128,13 @@ pipeline {
                                 echo "❌ snyk command not found at /usr/local/bin/snyk!"
                                 exit 1
                             fi
-                            $SNYK_PATH test --json 2>&1 | tee snyk_report.json
+                            $SNYK_PATH test 2>&1 | tee snyk_report.txt
                             exit ${PIPESTATUS[0]}
                             ''',
                             returnStatus: true
                         )
                         if (result != 0) {
-                            def snykOut = fileExists('snyk_report.json') ? readFile('snyk_report.json').take(3000) : 'Snyk scan failed.'
+                            def snykOut = fileExists('snyk_report.txt') ? readFile('snyk_report.txt').take(5000) : 'Snyk scan failed.'
                             _logError('SCA (Snyk)', snykOut)
                             error("Snyk found vulnerabilities")
                         }
@@ -156,13 +156,13 @@ pipeline {
                                 echo "❌ checkov command not found at /usr/local/bin/checkov!"
                                 exit 1
                             fi
-                            $CHECKOV_PATH -d . --skip-check CKV_AWS_144,CKV2_AWS_61,CKV2_AWS_62 --output json 2>&1 | tee checkov_report.json
+                            $CHECKOV_PATH -d . --quiet --skip-check CKV_AWS_144,CKV2_AWS_61,CKV2_AWS_62 2>&1 | tee checkov_report.txt
                             exit ${PIPESTATUS[0]}
                             ''',
                             returnStatus: true
                         )
                         if (result != 0) {
-                            def checkovOut = fileExists('checkov_report.json') ? readFile('checkov_report.json').take(3000) : 'Checkov scan failed.'
+                            def checkovOut = fileExists('checkov_report.txt') ? readFile('checkov_report.txt').take(5000) : 'Checkov scan failed.'
                             _logError('IaC Scanning (Checkov)', checkovOut)
                             error("Checkov found IaC issues")
                         }
@@ -345,7 +345,7 @@ ${report}
 }
 
 def _applyGeminiFix(String errorContent) {
-    def prompt = "Fix these errors by providing the COMPLETE updated code for any modified files. You MUST use this exact format:\n<<<FIX_FILE: path/to/file>>>\n<complete new file content>\n<<<END_FIX>>>\nIf a dependency needs updating, output the entire updated package.json. Do NOT write terminal commands. Respond ONLY with the fix blocks.\n\n" + errorContent.take(2000)
+    def prompt = "Fix these errors by providing the COMPLETE updated code for any modified files. You MUST use this exact format:\n<<<FIX_FILE: path/to/file>>>\n<complete new file content>\n<<<END_FIX>>>\nIf a dependency needs updating, output the entire updated package.json. Do NOT write terminal commands. Respond ONLY with the fix blocks.\n\n" + errorContent.take(6000)
 
     def fixInstructions = _geminiCall(prompt)
     writeFile file: env.FIX_SUMMARY, text: fixInstructions
