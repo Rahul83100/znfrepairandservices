@@ -1,0 +1,18 @@
+terraform scan results:
+
+Passed checks: 12, Failed checks: 1, Skipped checks: 0
+
+Check: CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
+	FAILED for resource: aws_s3_bucket.student_data_bucket
+	File: /ZNF/main.tf:5-7
+	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/aws-policies/aws-general-policies/ensure-that-s3-buckets-are-encrypted-with-kms-by-default
+
+		5 | resource "aws_s3_bucket" "student_data_bucket" {
+		6 |   bucket = "ims-christ-university-data"
+		7 | }
+
+terraform_plan scan results:
+
+Passed checks: 0, Failed checks: 0, Skipped checks: 0, Parsing errors: 1
+
+
