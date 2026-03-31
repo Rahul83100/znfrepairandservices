@@ -13,14 +13,7 @@ resource "aws_s3_bucket_versioning" "student_bucket_versioning" {
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "student_bucket_encryption" {
-  bucket = aws_s3_bucket.student_data_bucket.id
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "aws:kms"
-    }
-  }
-}
+
 
 resource "aws_s3_bucket_public_access_block" "student_data_access" {
   bucket = aws_s3_bucket.student_data_bucket.id
