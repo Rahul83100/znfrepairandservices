@@ -363,9 +363,12 @@ matches = re.findall(pattern, content, re.DOTALL)
 if matches:
     for filepath, filecontent in matches:
         filepath = filepath.strip()
+        fc = filecontent.strip()
+        fc = re.sub(r'^```[a-z]*\\n+', '', fc) # Remove starting markdown ```json
+        fc = re.sub(r'\\n+```$', '', fc)      # Remove ending markdown ```
         full = os.path.join(workspace, filepath)
         os.makedirs(os.path.dirname(full), exist_ok=True)
-        open(full, 'w').write(filecontent.strip())
+        open(full, 'w').write(fc)
         print(f'Fixed: {filepath}')
 else:
     print('No structured fix blocks. See fix_summary.txt for manual steps.')
