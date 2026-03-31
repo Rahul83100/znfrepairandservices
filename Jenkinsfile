@@ -365,7 +365,7 @@ if matches:
         filepath = filepath.strip()
         fc = filecontent.strip()
         fc = re.sub(r'^```[a-z]*\\n+', '', fc) # Remove starting markdown ```json
-        fc = re.sub(r'\\n+```$', '', fc)      # Remove ending markdown ```
+        fc = re.sub(r'\\n+```\\$', '', fc)      # Remove ending markdown ```
         full = os.path.join(workspace, filepath)
         os.makedirs(os.path.dirname(full), exist_ok=True)
         open(full, 'w').write(fc)
