@@ -17,7 +17,7 @@ pipeline {
 
         GIT_REPO_URL    = 'https://github.com/Rahul83100/znfrepairandservices.git'
         GIT_BRANCH      = 'secure-test'
-        ADMIN_EMAIL     = 'admin@example.com'
+        ADMIN_EMAIL     = 'rahul636071@gmail.com'
 
         ERROR_FILE      = "${WORKSPACE}/scan_errors.txt"
         REPORT_FILE     = "${WORKSPACE}/ai_report.txt"
@@ -345,7 +345,7 @@ ${report}
 }
 
 def _applyGeminiFix(String errorContent) {
-    def prompt = "Fix these errors. For each fix use format:\n<<<FIX_FILE: path/to/file>>>\n<fixed content>\n<<<END_FIX>>>\nEnd with ===SUMMARY===\n\n" + errorContent.take(2000)
+    def prompt = "Fix these errors by providing the COMPLETE updated code for any modified files. You MUST use this exact format:\n<<<FIX_FILE: path/to/file>>>\n<complete new file content>\n<<<END_FIX>>>\nIf a dependency needs updating, output the entire updated package.json. Do NOT write terminal commands. Respond ONLY with the fix blocks.\n\n" + errorContent.take(2000)
 
     def fixInstructions = _geminiCall(prompt)
     writeFile file: env.FIX_SUMMARY, text: fixInstructions
