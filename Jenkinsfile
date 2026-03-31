@@ -33,13 +33,13 @@ pipeline {
 
     stages {
 
-        // ── Init: clear error log ─────────────────────────────────────────
+        // ── Init: clear workspace ─────────────────────────────────────────
         stage('Init') {
             steps {
                 script {
-                    sh "rm -f '${ERROR_FILE}' '${REPORT_FILE}' '${FIX_SUMMARY}'"
-                    writeFile file: env.ERROR_FILE, text: ''
-                    echo "✅ Pipeline initialised."
+                    deleteDir() // Wipe the entire workspace to prevent hidden files like old .git logs from triggering scanners
+                    writeFile file: env.ERROR_FILE, text: '' // Recreate the error log file
+                    echo "✅ Workspace cleaned and pipeline initialised."
                 }
             }
         }
@@ -127,11 +127,12 @@ pipeline {
                     script {
                         def result = sh(
                             script: '''#!/bin/bash
-                            if ! command -v snyk &> /dev/null; then
-                                echo "❌ snyk command not found! Please install Snyk CLI on the Jenkins server."
+                            SNYK_PATH=$(which snyk || echo /usr/local/bin/snyk)
+                            if [ ! -f "$SNYK_PATH" ]; then
+                                echo "❌ snyk command not found at /usr/local/bin/snyk!"
                                 exit 1
                             fi
-                            snyk test --json 2>&1 | tee snyk_report.json
+                            $SNYK_PATH test --json 2>&1 | tee snyk_report.json
                             exit ${PIPESTATUS[0]}
                             ''',
                             returnStatus: true
@@ -154,11 +155,12 @@ pipeline {
                     script {
                         def result = sh(
                             script: '''#!/bin/bash
-                            if ! command -v checkov &> /dev/null; then
-                                echo "❌ checkov command not found! Please install Checkov on the Jenkins server."
+                            CHECKOV_PATH=$(which checkov || echo /usr/local/bin/checkov)
+                            if [ ! -f "$CHECKOV_PATH" ]; then
+                                echo "❌ checkov command not found at /usr/local/bin/checkov!"
                                 exit 1
                             fi
-                            checkov -d . --output json 2>&1 | tee checkov_report.json
+                            $CHECKOV_PATH -d . --output json 2>&1 | tee checkov_report.json
                             exit ${PIPESTATUS[0]}
                             ''',
                             returnStatus: true
