@@ -241,7 +241,7 @@ pipeline {
                         sh """
                             git config user.email "jenkins-ai@pipeline.local"
                             git config user.name  "Jenkins AI Bot"
-                            git add -- . ':!*_report.txt' ':!*_report.json' ':!scan_errors.txt' ':!ai_report.txt' ':!fix_summary.txt' ':!.gemini_prompt.txt'
+                            git add -A
                             git diff --cached --quiet && echo "No changes to commit" || \
                             git commit -m "🤖 AI Auto-Fix: resolved build #${BUILD_NUMBER} errors"
                             REPO_PATH=\$(echo '${GIT_REPO_URL}' | sed 's|https://||')
@@ -356,6 +356,8 @@ RULES:
 4. Do NOT write shell commands, npm commands, or instructions. ONLY output fix blocks.
 5. For Terraform files, use 'sse_algorithm = "aws:kms"' without specifying a KMS key ARN (AWS uses default).
 6. Fix ALL errors mentioned below in a SINGLE response.
+7. Use the EXACT file path shown in the error report (e.g. if the error says 'File: /ZNF/main.tf', use 'ZNF/main.tf' without the leading slash).
+8. Do NOT wrap code in markdown backticks like ```.
 
 ERRORS:
 """ + errorContent.take(6000)
