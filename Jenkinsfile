@@ -16,7 +16,7 @@ pipeline {
         GIT_CREDENTIALS = 'github-credentials'
 
         GIT_REPO_URL    = 'https://github.com/Rahul83100/znfrepairandservices.git'
-        GIT_BRANCH      = 'main'
+        GIT_BRANCH      = 'secure-test'
         ADMIN_EMAIL     = 'admin@example.com'
 
         ERROR_FILE      = "${WORKSPACE}/scan_errors.txt"
@@ -246,7 +246,7 @@ pipeline {
                             git commit -m "🤖 AI Auto-Fix: resolved build #${BUILD_NUMBER} errors"
                             REPO_PATH=\$(echo '${GIT_REPO_URL}' | sed 's|https://||')
                             git remote set-url origin "https://\${GIT_USER}:\${GIT_PASS}@\${REPO_PATH}"
-                            git push origin ${GIT_BRANCH}
+                            git push origin HEAD:${GIT_BRANCH}
                             echo "✅ Changes pushed to ${GIT_BRANCH}."
                         """
                     }

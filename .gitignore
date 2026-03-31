@@ -6,3 +6,5 @@ ai_report.txt
 fix_summary.txt
 sonar_output.txt
 *.json.bak
+*_report.json
+.gemini_prompt.txt
