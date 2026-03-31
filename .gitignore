@@ -7,4 +7,5 @@ fix_summary.txt
 sonar_output.txt
 *.json.bak
 *_report.json
+*_report.txt
 .gemini_prompt.txt

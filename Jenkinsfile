@@ -241,7 +241,7 @@ pipeline {
                         sh """
                             git config user.email "jenkins-ai@pipeline.local"
                             git config user.name  "Jenkins AI Bot"
-                            git add -A
+                            git add -- . ':!*_report.txt' ':!*_report.json' ':!scan_errors.txt' ':!ai_report.txt' ':!fix_summary.txt' ':!.gemini_prompt.txt'
                             git diff --cached --quiet && echo "No changes to commit" || \
                             git commit -m "🤖 AI Auto-Fix: resolved build #${BUILD_NUMBER} errors"
                             REPO_PATH=\$(echo '${GIT_REPO_URL}' | sed 's|https://||')
@@ -345,7 +345,20 @@ ${report}
 }
 
 def _applyGeminiFix(String errorContent) {
-    def prompt = "Fix these errors by providing the COMPLETE updated code for any modified files. You MUST use this exact format:\n<<<FIX_FILE: path/to/file>>>\n<complete new file content>\n<<<END_FIX>>>\nIf a dependency needs updating, output the entire updated package.json. Do NOT write terminal commands. Respond ONLY with the fix blocks.\n\n" + errorContent.take(6000)
+    def prompt = """You are an automated code fixer inside a CI/CD pipeline. Your output will be parsed by a script.
+RULES:
+1. You MUST respond ONLY with fix blocks in this EXACT format (no other text before or after):
+<<<FIX_FILE: relative/path/to/file>>>
+<complete file content>
+<<<END_FIX>>>
+2. Each fix block must contain the COMPLETE file content, not a partial snippet.
+3. Do NOT use placeholder values like YOUR_REGION, YOUR_KEY_ID, etc. Use real working defaults.
+4. Do NOT write shell commands, npm commands, or instructions. ONLY output fix blocks.
+5. For Terraform files, use 'sse_algorithm = "aws:kms"' without specifying a KMS key ARN (AWS uses default).
+6. Fix ALL errors mentioned below in a SINGLE response.
+
+ERRORS:
+""" + errorContent.take(6000)
 
     def fixInstructions = _geminiCall(prompt)
     writeFile file: env.FIX_SUMMARY, text: fixInstructions
