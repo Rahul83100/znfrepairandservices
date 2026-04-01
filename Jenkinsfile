@@ -90,13 +90,28 @@ pipeline {
 
         // ── SAST (SonarQube) ──────────────────────────────────────────────
         stage('Phase 2: SAST (SonarQube)') {
-            when { expression { false } } // Skipped: Maven not installed
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     script {
                         try {
                             withSonarQubeEnv('SonarQube') {
-                                sh 'mvn sonar:sonar -Dsonar.projectKey=students_tasks 2>&1 | tee sonar_output.txt || true'
+                                sh '''#!/bin/bash
+                                    set +e
+                                    echo "🔍 Running SonarQube SAST scan (sonar-scanner)..."
+                                    SCANNER=$(which sonar-scanner || echo /opt/sonar-scanner/bin/sonar-scanner)
+                                    if [ ! -f "$SCANNER" ]; then
+                                        echo "❌ sonar-scanner not found. Skipping SAST."
+                                        exit 0
+                                    fi
+                                    $SCANNER \
+                                        -Dsonar.projectKey=students_tasks \
+                                        -Dsonar.projectName="Students Tasks" \
+                                        -Dsonar.sources=. \
+                                        -Dsonar.exclusions=node_modules/**,**/*.test.js \
+                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                        2>&1 | tee sonar_output.txt
+                                    exit ${PIPESTATUS[0]}
+                                '''
                             }
                             timeout(time: 3, unit: 'MINUTES') {
                                 def qg = waitForQualityGate()
