@@ -95,7 +95,7 @@ pipeline {
                     script {
                         try {
                             // Use the Jenkins-installed SonarQube Scanner (via plugin)
-                            def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                            def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                             withSonarQubeEnv('SonarQube') {
                                 sh """
                                     echo "🔍 Running SonarQube SAST scan..."
