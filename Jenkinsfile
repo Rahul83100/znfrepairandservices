@@ -94,24 +94,20 @@ pipeline {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                     script {
                         try {
+                            // Use the Jenkins-installed SonarQube Scanner (via plugin)
+                            def scannerHome = tool name: 'SonarScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                             withSonarQubeEnv('SonarQube') {
-                                sh '''#!/bin/bash
-                                    set +e
-                                    echo "🔍 Running SonarQube SAST scan (sonar-scanner)..."
-                                    SCANNER=$(which sonar-scanner || echo /opt/sonar-scanner/bin/sonar-scanner)
-                                    if [ ! -f "$SCANNER" ]; then
-                                        echo "❌ sonar-scanner not found. Skipping SAST."
-                                        exit 0
-                                    fi
-                                    $SCANNER \
+                                sh """
+                                    echo "🔍 Running SonarQube SAST scan..."
+                                    echo "Scanner home: ${scannerHome}"
+                                    ${scannerHome}/bin/sonar-scanner \
                                         -Dsonar.projectKey=students_tasks \
-                                        -Dsonar.projectName="Students Tasks" \
+                                        -Dsonar.projectName="Students IMS" \
                                         -Dsonar.sources=. \
-                                        -Dsonar.exclusions=node_modules/**,**/*.test.js \
-                                        -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                                        -Dsonar.exclusions=node_modules/**,**/*.test.js,.git/**,*.json \
+                                        -Dsonar.host.url=http://68.183.93.244:9000 \
                                         2>&1 | tee sonar_output.txt
-                                    exit ${PIPESTATUS[0]}
-                                '''
+                                """
                             }
                             timeout(time: 3, unit: 'MINUTES') {
                                 def qg = waitForQualityGate()
