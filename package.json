@@ -2,8 +2,7 @@
   "name": "znfrepairandservices",
   "version": "1.0.0",
   "dependencies": {
-    "express": "^4.21.2",
-    "lodash": "^4.17.21"
+    "express": "^4.21.2"
   },
   "overrides": {
     "path-to-regexp": "^8.2.0"
