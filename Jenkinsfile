@@ -109,7 +109,7 @@ pipeline {
                                         2>&1 | tee sonar_output.txt
                                 """
                             }
-                            timeout(time: 3, unit: 'MINUTES') {
+                            timeout(time: 10, unit: 'MINUTES') {
                                 def qg = waitForQualityGate()
                                 if (qg.status != 'OK') {
                                     def msg = "SonarQube Quality Gate FAILED: ${qg.status}"
